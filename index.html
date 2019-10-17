@@ -54,13 +54,8 @@
         This sample dangerously sets HTML and is not recommended.
       </div>
       <div class="block">
-        Copy the below text into the send box to initiate the sample.
+        Press the send button below to initiate the sample.
       </div>
-      <div class="block">
-        <textarea>
-echo <table><tbody><tr><td><nobr>ABCDEFGHIJKLMNOPQRSTUVWXYZ</nobr></td><td><nobr>ABCDEFGHIJKLMNOPQRSTUVWXYZ</nobr></td><td><nobr>ABCDEFGHIJKLMNOPQRSTUVWXYZ</nobr></td><td><nobr>ABCDEFGHIJKLMNOPQRSTUVWXYZ</nobr></td><td><nobr>ABCDEFGHIJKLMNOPQRSTUVWXYZ</nobr></td><td><nobr>ABCDEFGHIJKLMNOPQRSTUVWXYZ</nobr></td><td><nobr>ABCDEFGHIJKLMNOPQRSTUVWXYZ</nobr></td><td><nobr>ABCDEFGHIJKLMNOPQRSTUVWXYZ</nobr></td><td><nobr>ABCDEFGHIJKLMNOPQRSTUVWXYZ</nobr></td><td><nobr>ABCDEFGHIJKLMNOPQRSTUVWXYZ</nobr></td><td><nobr>ABCDEFGHIJKLMNOPQRSTUVWXYZ</nobr></td></tr></tbody></table>
-            </textarea>
-          </div>
       </div>
     </div>
     <div id="webchat" role="main"></div>
@@ -98,10 +93,13 @@ echo <table><tbody><tr><td><nobr>ABCDEFGHIJKLMNOPQRSTUVWXYZ</nobr></td><td><nobr
         );
         const { token } = await res.json();
 
+        const store = createStore();
+
         window.ReactDOM.render(
           <ReactWebChat
             attachmentMiddleware={attachmentMiddleware}
             directLine={window.WebChat.createDirectLine({ token })}
+            store={store}
             styleOptions={{
               botAvatarInitials: "WC",
               userAvatarInitials: "CG"
@@ -110,6 +108,10 @@ echo <table><tbody><tr><td><nobr>ABCDEFGHIJKLMNOPQRSTUVWXYZ</nobr></td><td><nobr
           document.getElementById("webchat")
         );
 
+        store.dispatch({
+          type: 'WEB_CHAT/SET_SEND_BOX',
+          payload: { text: 'echo <table><tbody><tr><td><nobr>ABCDEFGHIJKLMNOPQRSTUVWXYZ</nobr></td><td><nobr>ABCDEFGHIJKLMNOPQRSTUVWXYZ</nobr></td><td><nobr>ABCDEFGHIJKLMNOPQRSTUVWXYZ</nobr></td><td><nobr>ABCDEFGHIJKLMNOPQRSTUVWXYZ</nobr></td><td><nobr>ABCDEFGHIJKLMNOPQRSTUVWXYZ</nobr></td><td><nobr>ABCDEFGHIJKLMNOPQRSTUVWXYZ</nobr></td><td><nobr>ABCDEFGHIJKLMNOPQRSTUVWXYZ</nobr></td><td><nobr>ABCDEFGHIJKLMNOPQRSTUVWXYZ</nobr></td><td><nobr>ABCDEFGHIJKLMNOPQRSTUVWXYZ</nobr></td><td><nobr>ABCDEFGHIJKLMNOPQRSTUVWXYZ</nobr></td><td><nobr>ABCDEFGHIJKLMNOPQRSTUVWXYZ</nobr></td></tr></tbody></table>' }
+        });
         document.querySelector("#webchat > *").focus();
       })().catch(err => console.error(err));
     </script>
