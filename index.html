@@ -26,17 +26,16 @@
       }
 
       .block {
-        padding: 10px; 
+        padding: 10px;
         text-align: center;
       }
       .warning {
-        background-color: #FEEFB3; 
-        color: #9F6000; 
-        margin: auto; 
+        background-color: #feefb3;
+        color: #9f6000;
+        margin: auto;
         padding: 20px;
         text-align: center;
-        width: 600px; 
-
+        width: 600px;
       }
       #webchat {
         height: 85%;
@@ -52,7 +51,6 @@
       </div>
       <div class="block">
         Press the send button below to initiate the sample.
-      </div>
       </div>
     </div>
     <div id="webchat" role="main"></div>
@@ -106,8 +104,11 @@
         );
 
         store.dispatch({
-          type: 'WEB_CHAT/SET_SEND_BOX',
-          payload: { text: 'echo <table><tbody><tr><td><nobr>ABCDEFGHIJKLMNOPQRSTUVWXYZ</nobr></td><td><nobr>ABCDEFGHIJKLMNOPQRSTUVWXYZ</nobr></td><td><nobr>ABCDEFGHIJKLMNOPQRSTUVWXYZ</nobr></td><td><nobr>ABCDEFGHIJKLMNOPQRSTUVWXYZ</nobr></td><td><nobr>ABCDEFGHIJKLMNOPQRSTUVWXYZ</nobr></td><td><nobr>ABCDEFGHIJKLMNOPQRSTUVWXYZ</nobr></td><td><nobr>ABCDEFGHIJKLMNOPQRSTUVWXYZ</nobr></td><td><nobr>ABCDEFGHIJKLMNOPQRSTUVWXYZ</nobr></td><td><nobr>ABCDEFGHIJKLMNOPQRSTUVWXYZ</nobr></td><td><nobr>ABCDEFGHIJKLMNOPQRSTUVWXYZ</nobr></td><td><nobr>ABCDEFGHIJKLMNOPQRSTUVWXYZ</nobr></td></tr></tbody></table>' }
+          type: "WEB_CHAT/SET_SEND_BOX",
+          payload: {
+            text:
+              "echo <table><tbody><tr><td><nobr>ABCDEFGHIJKLMNOPQRSTUVWXYZ</nobr></td><td><nobr>ABCDEFGHIJKLMNOPQRSTUVWXYZ</nobr></td><td><nobr>ABCDEFGHIJKLMNOPQRSTUVWXYZ</nobr></td><td><nobr>ABCDEFGHIJKLMNOPQRSTUVWXYZ</nobr></td><td><nobr>ABCDEFGHIJKLMNOPQRSTUVWXYZ</nobr></td><td><nobr>ABCDEFGHIJKLMNOPQRSTUVWXYZ</nobr></td><td><nobr>ABCDEFGHIJKLMNOPQRSTUVWXYZ</nobr></td><td><nobr>ABCDEFGHIJKLMNOPQRSTUVWXYZ</nobr></td><td><nobr>ABCDEFGHIJKLMNOPQRSTUVWXYZ</nobr></td><td><nobr>ABCDEFGHIJKLMNOPQRSTUVWXYZ</nobr></td><td><nobr>ABCDEFGHIJKLMNOPQRSTUVWXYZ</nobr></td></tr></tbody></table>"
+          }
         });
         document.querySelector("#webchat > *").focus();
       })().catch(err => console.error(err));
