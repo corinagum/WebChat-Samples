@@ -59,15 +59,16 @@
         "use strict";
 
         const { connectToWebChat, ReactWebChat } = window.WebChat;
-
         const { css } = window.Glamor;
 
         const SIDESCROLL_CSS = css({
-          position: "relative",
           overflowX: "auto",
+          position: "relative",
           width: "100%"
         });
 
+        // Create the custom renderer for meeting middleware filtering conditions below
+        // Please note that this dangerously sets HTML, which is not considered secure practice
         const AttachmentMiddlewareWithSideScroll = ({ card }) => (
           <div
             className={SIDESCROLL_CSS}
@@ -76,6 +77,7 @@
         );
 
         const attachmentMiddleware = () => next => card => {
+          // A custom renderer will be wrapped to attachments if content starts with '<...'
           if (card.attachment && /^</.test(card.attachment.content)) {
             return <AttachmentMiddlewareWithSideScroll card={card} />;
           }
@@ -103,6 +105,8 @@
           document.getElementById("webchat")
         );
 
+        // Mock Bot, used in this sample, will send an activity copying content when that content is prepended with 'echo'
+        // This action dispatches an HTML table to the bot, which will then return that HTML to the user
         store.dispatch({
           type: "WEB_CHAT/SET_SEND_BOX",
           payload: {
