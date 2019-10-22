@@ -1,10 +1,19 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title></title>
+    <title>Web Chat - Speech AudioConfig</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="./webchat.js"></script>
-    <script src="https://unpkg.com/microsoft-cognitiveservices-speech-sdk@1.7.0/distrib/browser/microsoft.cognitiveservices.speech.sdk.bundle-min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone@7.6.2/babel.min.js"></script>
+    <script src="https://unpkg.com/react@16.8.6/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16.8.6/umd/react-dom.development.js"></script>
+
+    <script src="https://cdn.botframework.com/botframework-webchat/latest/webchat.js"></script>
+
+    <!-- This sample is purposefully using a manually altered version of the Speech SDK, due to the following bug: -->
+    <!-- https://github.com/microsoft/cognitive-services-speech-sdk-js/issues/96 -->
+    <script src="./microsoft.cognitiveservices.speech.sdk.bundle.js"></script>
+
     <style>
       html,
       body {
@@ -21,7 +30,7 @@
   </head>
   <body>
     <main id="webchat"></main>
-    <script>
+    <script type="text/babel">
       function createFetchSpeechServicesCredentials() {
         let expireAfter = 0;
         let lastResult = {};
@@ -55,18 +64,22 @@
           { method: "POST" }
         );
         const { token } = await res.json();
+        const { ReactWebChat } = window.WebChat;
 
         const webSpeechPonyfillFactory = await window.WebChat.createCognitiveServicesSpeechServicesPonyfillFactory(
           {
+            // audioConfig,
             authorizationToken: fetchSpeechServicesToken,
             region: await fetchSpeechServicesRegion()
           }
         );
-        window.WebChat.renderWebChat(
-          {
-            directLine: window.WebChat.createDirectLine({ token }),
-            webSpeechPonyfillFactory
-          },
+
+        window.ReactDOM.render(
+          <ReactWebChat
+            directLine={window.WebChat.createDirectLine({ token })}
+            webSpeechPonyfillFactory={webSpeechPonyfillFactory}
+            // etc
+          />,
           document.getElementById("webchat")
         );
         document.querySelector("#webchat > *").focus();
