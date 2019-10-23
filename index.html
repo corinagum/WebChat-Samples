@@ -24,7 +24,7 @@
 
     <!-- This sample is purposefully using a manually altered version of the Speech SDK, due to the following bug: -->
     <!-- https://github.com/microsoft/cognitive-services-speech-sdk-js/issues/96 -->
-    <!-- See line 3036 on the bundle below for change-->
+    <!-- See line 3036 in the bundle below for change-->
     <script src="./microsoft.cognitiveservices.speech.sdk.bundle.js"></script>
     <style>
       html,
@@ -86,7 +86,11 @@
           { method: "POST" }
         );
         const { token } = await res.json();
-        const { ReactWebChat } = window.WebChat;
+        const {
+          createCognitiveServicesSpeechServicesPonyfillFactory,
+          createDirectLine,
+          ReactWebChat
+        } = window.WebChat;
         const {
           Fragment,
           useCallback,
@@ -95,6 +99,7 @@
           useState
         } = window.React;
 
+        // Dropdown for selecting which device microphone to use
         const AudioInputDropdown = ({ onChange, value }) => {
           const [devices, setDevices] = useState([]);
 
@@ -131,8 +136,9 @@
           ] = useState();
 
           useMemo(async () => {
-            const ponyfillFactory = await window.WebChat.createCognitiveServicesSpeechServicesPonyfillFactory(
+            const ponyfillFactory = await createCognitiveServicesSpeechServicesPonyfillFactory(
               {
+                // Updates the audioConfig prop according to selected device from <select> dropdown
                 audioConfig: window.SpeechSDK.AudioConfig.fromMicrophoneInput(
                   deviceId
                 ),
@@ -145,7 +151,7 @@
           }, [deviceId]);
 
           const directLine = useMemo(() => {
-            return window.WebChat.createDirectLine({ token });
+            return createDirectLine({ token });
           }, [token]);
 
           return (
