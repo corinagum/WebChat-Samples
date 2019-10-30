@@ -22,4 +22,3 @@ To learn more from Web Chat's existing samples, please see the related samples l
 1. [1.a - Getting started](https://github.com/microsoft/BotFramework-WebChat/tree/master/samples/01.a.getting-started-full-bundle)
 1. [3.a - Host with React](https://github.com/microsoft/BotFramework-WebChat/tree/master/samples/03.a.host-with-react)
 1. [10.a - Attachment middleware](https://github.com/microsoft/BotFramework-WebChat/tree/master/samples/10.a.customization-card-components)
-   > > > > > > > sidescroll/master
