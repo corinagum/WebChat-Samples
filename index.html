@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Web Chat - Speech AudioConfig</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="./webchat.js"></script>
+    <script
+      src="https://unpkg.com/@babel/standalone@7.6.2/babel.min.js"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://unpkg.com/react@16.8.6/umd/react.development.js"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://unpkg.com/react-dom@16.8.6/umd/react-dom.development.js"
+      crossorigin="anonymous"
+    ></script>
+
+    <script
+      src="https://cdn.botframework.com/botframework-webchat/latest/webchat.js"
+      crossorigin="anonymous"
+    ></script>
+
+    <!-- This sample is purposefully using a manually altered version of the Speech SDK, due to the following bug: -->
+    <!-- https://github.com/microsoft/cognitive-services-speech-sdk-js/issues/96 -->
+    <!-- See line 3036 in the bundle below for change-->
+    <script src="./microsoft.cognitiveservices.speech.sdk.bundle.js"></script>
+    <style>
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        font-family: sans-serif;
+        margin: 0;
+      }
+      .dropdown-container {
+        background-color: #eeeeee;
+        text-align: center;
+      }
+      #main {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+      .wc-container {
+        height: 100%;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <main id="main"></main>
+    <script type="text/babel">
+      function createFetchSpeechServicesCredentials() {
+        let expireAfter = 0;
+        let lastResult = {};
+
+        return async () => {
+          if (Date.now() > expireAfter) {
+            const speechServicesTokenRes = await fetch(
+              "https://webchat-mockbot.azurewebsites.net/speechservices/token",
+              { method: "POST" }
+            );
+            lastResult = await speechServicesTokenRes.json();
+            expireAfter = Date.now() + 300000;
+          }
+          return lastResult;
+        };
+      }
+
+      const fetchSpeechServicesCredentials = createFetchSpeechServicesCredentials();
+
+      async function fetchSpeechServicesRegion() {
+        return (await fetchSpeechServicesCredentials()).region;
+      }
+
+      async function fetchSpeechServicesToken() {
+        return (await fetchSpeechServicesCredentials()).token;
+      }
+
+      (async function() {
+        const res = await fetch(
+          "https://webchat-mockbot.azurewebsites.net/directline/token",
+          { method: "POST" }
+        );
+        const { token } = await res.json();
+        const {
+          createCognitiveServicesSpeechServicesPonyfillFactory,
+          createDirectLine,
+          ReactWebChat
+        } = window.WebChat;
+        const {
+          Fragment,
+          useCallback,
+          useEffect,
+          useMemo,
+          useState
+        } = window.React;
+
+        // Dropdown for selecting which device microphone to use
+        const AudioInputDropdown = ({ onChange, value }) => {
+          const [devices, setDevices] = useState([]);
+
+          useMemo(async () => {
+            const devices = await navigator.mediaDevices.enumerateDevices();
+
+            setDevices(devices.filter(({ kind }) => kind === "audioinput"));
+          }, []);
+
+          const handleChange = useCallback(
+            event => {
+              onChange(event.target.value);
+            },
+            [onChange]
+          );
+
+          return (
+            <select onChange={handleChange} value={value}>
+              {devices.map(({ deviceId, label }) => (
+                <option key={deviceId} value={deviceId}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          );
+        };
+
+        const App = props => {
+          const [deviceId, setDeviceId] = useState();
+          const lastUpdated = useMemo(() => new Date(), [deviceId]);
+          const [
+            webSpeechPonyfillFactory,
+            setWebSpeechPonyfillFactory
+          ] = useState();
+
+          useMemo(async () => {
+            const ponyfillFactory = await createCognitiveServicesSpeechServicesPonyfillFactory(
+              {
+                // Updates the audioConfig prop according to selected device from <select> dropdown
+                audioConfig: window.SpeechSDK.AudioConfig.fromMicrophoneInput(
+                  deviceId
+                ),
+                authorizationToken: fetchSpeechServicesToken,
+                region: await fetchSpeechServicesRegion()
+              }
+            );
+
+            setWebSpeechPonyfillFactory(() => ponyfillFactory);
+          }, [deviceId]);
+
+          const directLine = useMemo(() => {
+            return createDirectLine({ token });
+          }, [token]);
+
+          return (
+            <Fragment>
+              <div className="dropdown-container">
+                <p>{`Microphone last updated at ${lastUpdated}`}</p>
+                <AudioInputDropdown onChange={setDeviceId} value={deviceId} />
+              </div>
+              <div className="wc-container">
+                <ReactWebChat
+                  directLine={directLine}
+                  webSpeechPonyfillFactory={webSpeechPonyfillFactory}
+                />
+              </div>
+            </Fragment>
+          );
+        };
+
+        window.ReactDOM.render(<App />, document.getElementById("main"));
+      })().catch(err => console.warn(err));
+    </script>
+  </body>
+</html>
