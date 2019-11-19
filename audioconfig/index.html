@@ -108,7 +108,6 @@
 
             setDevices(devices.filter(({ kind }) => kind === "audioinput"));
           }, []);
-          console.log(devices);
           const handleChange = useCallback(
             event => {
               onChange(event.target.value);
