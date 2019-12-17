@@ -15,6 +15,10 @@ You should see the following:
 
 <img src="./sidescrolling-webchat.png" alt="sidescrolling webchat"/>
 
+## Notes
+
+1. This is using a manual build of Web Chat, which may or may not be up-to-date. See webchatjs.txt in the root directory for current build date.
+
 ## Further reading
 
 To learn more from Web Chat's existing samples, please see the related samples linked below.

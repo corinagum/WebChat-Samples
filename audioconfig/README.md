@@ -13,7 +13,7 @@ This sample utilizes the Cognitive Services Speech Services SDK to allow the use
 
 ## Notes
 
-1. This is using a manual build of Web Chat, which adds the `audioConfig` prop to `createCognitiveServicesSpeechServicesPonyfillFactory.js`
+1. This is using a manual build of Web Chat, which may or may not be up-to-date. See webchatjs.txt in the root directory for current build date.
 1. Due to the error linked here: [CognitiveServices Speech SDK issue 96](https://github.com/microsoft/cognitive-services-speech-sdk-js/issues/96), this sample is also using a manual build of the Speech SDK. To see that change, please see `line 3037` of `microsoft.cognitiveservices.speech.sdk.bundle.js`. Please track the bug with the Cognitive Services team.
 
 ## Further reading
