@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <title>Web Chat: Markdown-it Emoji</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <script src="https://unpkg.com/react@16.8.6/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16.8.6/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/react-redux@7.1.0/dist/react-redux.min.js"></script>
+    <script src="https://unpkg.com/glamor@2.20.40/umd/index.js"></script>
+
+    <script src="../webchat.js"></script>
+
+    <!-- Scripts for this demo: markdown-it and markdown-it-emoji-->
+    <script src="https://unpkg.com/markdown-it@10.0.0/dist/markdown-it.min.js"></script>
+    <script src="https://unpkg.com/markdown-it-emoji@1.4.0/dist/markdown-it-emoji.min.js"></script>
+
+    <style>
+      html,
+      body {
+        height: 100%;
+        font-family: sans-serif;
+      }
+      body {
+        margin: 0;
+      }
+      #webchat {
+        height: 100%;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="webchat" role="main"></div>
+    <script type="text/babel">
+      (async function() {
+        "use strict";
+        const { connectToWebChat, ReactWebChat } = window.WebChat;
+        const { css } = window.Glamor;
+
+        let emoji = window.markdownitEmoji;
+        let md = window.markdownit().use(emoji);
+
+        const activityMiddleware = () => next => card => {
+          if (card.activity.from.role === "user") {
+            card.activity.textFormat = "markdown";
+          }
+          return next(card);
+        };
+
+        const attachmentMiddleware = () => next => card => {
+          // A custom renderer will be wrapped to attachments if content starts with '<...'
+          if (card.attachment && /^</.test(card.attachment.content)) {
+            return <AttachmentMiddlewareWithSideScroll card={card} />;
+          }
+          return next(card);
+        };
+
+        const res = await fetch(
+          "https://webchat-mockbot.azurewebsites.net/directline/token",
+          { method: "POST" }
+        );
+        const { token } = await res.json();
+
+        const store = window.WebChat.createStore(
+          {},
+          ({ dispatch }) => next => action => {
+            if (action.type === "DIRECT_LINE/CONNECT_FULFILLED") {
+              dispatch({
+                type: "WEB_CHAT/SEND_MESSAGE",
+                payload: {
+                  type: "text/markdown",
+                  text: "echo :) :( :innocent: :kissing:"
+                }
+              });
+            }
+
+            return next(action);
+          }
+        );
+
+        window.ReactDOM.render(
+          <ReactWebChat
+            attachmentMiddleware={attachmentMiddleware}
+            activityMiddleware={activityMiddleware}
+            directLine={window.WebChat.createDirectLine({ token })}
+            renderMarkdown={md.render.bind(md)}
+            store={store}
+          />,
+          document.getElementById("webchat")
+        );
+
+        // Mock Bot, used in this sample, will send an activity copying content when that content is prepended with 'echo'
+        // This action dispatches an HTML table to the bot, which will then return that HTML to the user
+        store.dispatch({
+          type: "WEB_CHAT/SET_SEND_BOX",
+          payload: {
+            text: "echo :)"
+          }
+        });
+        document.querySelector("#webchat > *").focus();
+      })().catch(err => console.error(err));
+    </script>
+  </body>
+</html>
