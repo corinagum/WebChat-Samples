@@ -1,1 +1,1 @@
-Last webchat.js file update from BotFramework-WebChat was on 12/17/2019
+Last webchat.js file update from BotFramework-WebChat was on 1/07/2020
