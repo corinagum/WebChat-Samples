@@ -107,6 +107,9 @@
           useMemo(async () => {
             const devices = await navigator.mediaDevices.enumerateDevices();
 
+            console.log(`Devices:`);
+            console.log(devices);
+
             setDevices(devices.filter(({ kind }) => kind === "audioinput"));
           }, []);
           const handleChange = useCallback(

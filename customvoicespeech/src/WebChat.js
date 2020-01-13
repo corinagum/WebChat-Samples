@@ -29,7 +29,9 @@ const WebChat = ({ className, onFetchToken, token, store }) => {
   const webSpeechPonyfillFactory = createCognitiveServicesSpeechServicesPonyfillFactory(
     {
       region: "westus",
-      subscriptionKey: ""
+      subscriptionKey: "5e400984609949e0bf6c56f19c19a618",
+      speechRecognitionEndpointId: "7b1af7fb-8678-4b5a-bc3d-70f2ed10218c",
+      speechSynthesisDeploymentId: "c1fa8d04-7348-4593-8150-6587330251c0"
     }
   );
 
@@ -42,11 +44,14 @@ const WebChat = ({ className, onFetchToken, token, store }) => {
     onFetchToken();
   }, [onFetchToken]);
 
+  const selectVoice = () => ({ voiceURI: "Corina voice training model" });
+
   return token ? (
     <div className="webchat">
       <ReactWebChat
         className={`${className || ""} web-chat`}
         directLine={directLine}
+        selectVoice={selectVoice}
         store={store}
         styleSet={styleSet}
         webSpeechPonyfillFactory={webSpeechPonyfillFactory}
